@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册表单</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: #4a6bdf;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+        
+        header h1 {
+            font-weight: 600;
+            font-size: 28px;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4a6bdf;
+            box-shadow: 0 0 0 2px rgba(74, 107, 223, 0.2);
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            background: #4a6bdf;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #3a5bd0;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .login-link a {
+            color: #4a6bdf;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+        
+        .success-message {
+            background: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>创建您的账户</h1>
+        </header>
+        
+        <div class="form-container">
+            <div class="success-message" id="successMessage">
+                注册成功！
+            </div>
+            
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required minlength="6" maxlength="14" placeholder="请输入6-14个字符">
+                    <div class="error" id="usernameError">用户名长度必须在6-14个字符之间</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">电子邮件</label>
+                    <input type="email" id="email" name="email" required placeholder="请输入有效的电子邮件地址">
+                    <div class="error" id="emailError">请输入有效的电子邮件地址</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码">
+                    <div class="error" id="passwordError">密码必须至少包含8个字符</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">确认密码</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="请再次输入密码">
+                    <div class="error" id="confirmPasswordError">两次输入的密码不一致</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="avatar">上传头像</label>
+                    <input type="file" id="avatar" name="avatar" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bio">个人简介</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="简要介绍一下你自己..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="country">国家</label>
+                    <select id="country" name="country">
+                        <option value="">请选择国家</option>
+                        <option value="china">中国</option>
+                        <option value="usa">美国</option>
+                        <option value="japan">日本</option>
+                        <option value="korea">韩国</option>
+                        <option value="germany">德国</option>
+                        <option value="france">法国</option>
+                        <option value="uk">英国</option>
+                        <option value="other">其他国家</option>
+                    </select>
+                </div>
+                
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="newsletter" name="newsletter" value="yes">
+                    <label for="newsletter">订阅新闻邮件</label>
+                </div>
+                
+                <button type="submit" id="registerButton">注册</button>
+            </form>
+            
+            <div class="login-link">
+                已有账户？<a href="#">登录</a>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 示例公司 | 隐私政策 | 使用条款</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 获取表单值
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // 验证用户名长度 （不用此代码，因为控件的属性已经设置了最大最小值
+            // if (username.length < 6 || username.length > 14) {
+            //     document.getElementById('usernameError').style.display = 'block';
+            //     return;
+            // } else {
+            //     document.getElementById('usernameError').style.display = 'none';
+            // }
+            
+            // 验证密码匹配
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('confirmPasswordError').style.display = 'none';
+            }
+            
+            // 显示成功消息
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // 弹出消息窗口展示提交的用户名和邮箱
+            alert(`注册成功！\n用户名: ${username}\n电子邮箱: ${email}`);
+            
+            // 3秒后重置表单
+            setTimeout(() => {
+                document.getElementById('registrationForm').reset();
+                document.getElementById('successMessage').style.display = 'none';
+            }, 3000);
+        });
+        
+        // 实时验证 （该处仅仅是显示不合规的输入，提醒用户重新输入，但对提交按钮没有约束作用
+        document.getElementById('username').addEventListener('input', function() {
+            if (this.value.length < 6 || this.value.length > 14) {
+                document.getElementById('usernameError').style.display = 'block';
+            } else {
+                document.getElementById('usernameError').style.display = 'none';
+            }
+        });
+        
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            if (this.value !== password) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+            } else {
+                document.getElementById('confirmPasswordError').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
