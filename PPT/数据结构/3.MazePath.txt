@@ -1,0 +1,169 @@
+//p51课本例题，迷宫用-1表示墙，0表示路，-2表示禁行，1..n表示步数
+//如果要输出通行的坐标位置，可以另设一个队列记录路径
+//by sway
+#include <iostream>
+#include <stack>
+using namespace std;
+
+#define TRUE 1
+#define FALSE 0
+typedef int Status;
+
+typedef struct
+{
+    int x;
+    int y;
+} PosType ;       //迷宫位置坐标
+
+// 重载==运算符，用于比较两个位置是否相等
+Status operator==(PosType p1, PosType p2)
+{
+    return (p1.x==p2.x) && (p1.y==p2.y);
+}
+
+typedef struct
+{
+    int ord;	  //当前步数编号
+    PosType seat; //位置坐标
+    int di;		  //方向
+} SElemType; 	  //元素类型
+
+//实现课本用到的几个栈函数
+Status StackEmpty(stack<SElemType> &S) //栈空判断。传引用效率高
+{
+    return S.empty()?TRUE:FALSE;
+}
+
+void Push(stack<SElemType> &S, SElemType e) //入栈e
+{
+    S.push(e);
+}
+
+void Pop(stack<SElemType> &S, SElemType &e) //出栈e
+{
+    e=S.top();
+    S.pop();
+}
+
+//直接用课本p50定义的迷宫，省的输入
+#define M 10
+#define N 10
+int maze[M][N]= { //-1表示墙，0表示路
+    {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+    {-1, 0, 0,-1, 0, 0, 0,-1, 0,-1},
+    {-1, 0, 0,-1, 0, 0, 0,-1, 0,-1},
+    {-1, 0, 0, 0, 0,-1,-1, 0, 0,-1},
+    {-1, 0,-1,-1,-1, 0, 0, 0, 0,-1},
+    {-1, 0, 0, 0,-1, 0, 0, 0, 0,-1},
+    {-1, 0,-1, 0, 0, 0,-1, 0, 0,-1},
+    {-1, 0,-1,-1,-1, 0,-1,-1, 0,-1},
+    {-1,-1, 0, 0, 0, 0, 0, 0, 0,-1},
+    {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1}
+};
+//为与课本一致，弃用0下标
+PosType direc[5]={{0,0},{0,1},{1,0},{0,-1},{-1,0}}; //东（右）、南（下）、西（左）、北（上)
+int curstep; //当前步数，因多个函数用到，设为全局变量
+
+//输出迷宫
+void PrintMaze()
+{
+    for(int i=0; i<M; i++)
+    {
+        for (int j=0; j<N; j++)
+            printf("%3d",maze[i][j]);
+        printf("\n");
+    }
+}
+
+//以下是课本伪代码的支持函数
+//判断是否可以通行
+Status Pass(PosType pos)
+{
+    if (maze[pos.x][pos.y]==0)
+        return TRUE;
+    return FALSE;
+}
+
+//标记路径，将通路数字改为步数
+void FootPrint(PosType pos)
+{
+    maze[pos.x][pos.y]=curstep;
+}
+
+//标记为禁行，防止再次误入
+void MarkPrint(PosType pos)
+{
+    maze[pos.x][pos.y]=-2;
+}
+
+//路径的下一步
+PosType NextPos(PosType pos,int di)
+{
+    pos.x+=direc[di].x;
+    pos.y+=direc[di].y;
+    return pos;
+}
+
+Status MazePath(PosType Start,PosType End)
+{
+    SElemType e;
+    stack<SElemType> S;
+    PosType curpos=Start;
+    curstep=1;
+
+    do
+    {
+        if (Pass(curpos))	//当前位置可以通过，即是未曾走到过的通道快
+        {
+
+            FootPrint(curpos); //标记足迹
+            e={curstep, curpos, 1};
+            Push(S, e);
+            if (curpos==End)
+                return TRUE;	//到达终点
+            curpos=NextPos(curpos, 1); //下一个位置是当前位置的东邻
+            curstep++; //探索下一步
+        }
+        else		//当前位置不能通过
+        {
+            if(!StackEmpty(S))
+            {
+                Pop(S, e);
+                while(e.di==4 && !StackEmpty(S)) //e.di==4表示4个方向都走过了，只能回退一格
+                {
+                    MarkPrint(e.seat); //留下不能通过的标记
+                    Pop(S, e);
+                    curstep--; //步数减一，课本漏了这个会导致步数算错
+                }
+                if(e.di < 4)
+                {
+                    e.di++; //换一个方向探索
+                    Push(S,e);
+                    curpos=NextPos(e.seat,e.di);
+                }
+            }
+        }
+    }while (!StackEmpty(S));
+
+    return FALSE;
+}
+
+int main()
+{
+    printf("迷宫如下:\n");
+    PrintMaze();
+
+    PosType Start={1,1}; //迷宫入口
+    PosType End={8,8};   //迷宫出口，小写end有歧义，改为End
+    if(MazePath(Start,End))
+    {
+        printf("迷宫的一条路径如下：\n");
+        PrintMaze();
+    }
+    else
+    {
+        printf("迷宫走不通。\n");
+    }
+
+    return 0;
+}
